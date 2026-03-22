@@ -8,13 +8,13 @@ namespace FuzionRainfallMonitor.Tests
 {
     public static class SmokeTests
     {
-        public static void Run(ICsvService csvService)
+        public static void Run(IDeviceReader deviceReader, IReadingReader readingReader)
         {
             TestPathHelper();
             TestModels();
             TestAppLogger();
             TestConsoleDisplayEmptyGuards();
-            TestCsvService(csvService);
+            TestCsvService(deviceReader, readingReader);
             TestRainfallServiceStatus();
             TestRainfallServiceTrend();
             TestRainfallServiceWindow();
@@ -123,24 +123,24 @@ namespace FuzionRainfallMonitor.Tests
         }
 
         // ─── 5. CsvService ────────────────────────────────────────
-        private static void TestCsvService(ICsvService csvService)
+        private static void TestCsvService(IDeviceReader deviceReader, IReadingReader readingReader)
         {
             Console.WriteLine("----- Test: CsvService -----");
             Console.WriteLine();
 
             // Missing file guard
-            var missingDevices = csvService.ReadDevices(PathHelper.GetDataFilePath("nonexistent.csv"));
+            var missingDevices = deviceReader.ReadDevices(PathHelper.GetDataFilePath("nonexistent.csv"));
             AssertTest("Missing file returns empty list", missingDevices.Count == 0);
 
-            var missingReadings = csvService.ReadRainfallReadings(PathHelper.GetDataFilePath("nonexistent.csv"));
+            var missingReadings = readingReader.ReadRainfallReadings(PathHelper.GetDataFilePath("nonexistent.csv"));
             AssertTest("Missing readings file returns empty list", missingReadings.Count == 0);
 
             // Real data loads correctly
-            var realDevices = csvService.ReadDevices(PathHelper.GetDataFilePath("Devices.csv"));
+            var realDevices = deviceReader.ReadDevices(PathHelper.GetDataFilePath("Devices.csv"));
             AssertTest("Devices.csv loads 8 devices", realDevices.Count == 8);
 
             // Dirty data filtered
-            var (realReadings, _) = csvService.LoadAllReadings(PathHelper.GetAllReadingFiles());
+            var (realReadings, _) = readingReader.LoadAllReadings(PathHelper.GetAllReadingFiles());
             AssertTest("Readings loaded from all files", realReadings.Count > 0);
             AssertTest("Dirty data filtered (2k4, 2ff, year 3030 skipped)", realReadings.All(r => r.RainfallMm.HasValue));
 

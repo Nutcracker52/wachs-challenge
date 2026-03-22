@@ -7,7 +7,7 @@ using System.Globalization;
 
 namespace FuzionRainfallMonitor.Services
 {
-    public class CsvService : ICsvService
+    public class CsvService : IDeviceReader, IReadingReader
     {
         public List<Device> ReadDevices(string filePath)
         {
