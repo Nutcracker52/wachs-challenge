@@ -1,6 +1,6 @@
 ﻿namespace FuzionRainfallMonitor.Models
 {
-    public enum RainfallStatus { Green, Amber, Red }
+    public enum RainfallStatus { Green, Amber, Red, NoData }
     public enum RainfallTrend { Increasing, Decreasing, Stable, Insufficient }
 
     public class DeviceReport

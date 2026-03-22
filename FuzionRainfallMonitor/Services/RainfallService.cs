@@ -75,7 +75,17 @@ namespace FuzionRainfallMonitor.Services
 
                 if (deviceReadings.Count == 0)
                 {
-                    AppLogger.LogWarning($"No readings in 4hr window for [{device.DeviceId}] {device.DeviceName} — skipping");
+                    AppLogger.LogWarning($"No readings in 4hr window for [{device.DeviceId}] {device.DeviceName} — reporting as No Data");
+                    reports.Add(new DeviceReport
+                    {
+                        DeviceId = device.DeviceId,
+                        DeviceName = device.DeviceName,
+                        Location = device.Location,
+                        AverageRainfallMm = -1,
+                        Status = RainfallStatus.NoData,
+                        Trend = RainfallTrend.Insufficient,
+                        ReadingCount = 0
+                    });
                     continue;
                 }
 

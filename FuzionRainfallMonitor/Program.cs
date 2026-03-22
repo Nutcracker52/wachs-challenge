@@ -1,72 +1,19 @@
 ﻿using FuzionRainfallMonitor.Display;
 using FuzionRainfallMonitor.Helpers;
-using FuzionRainfallMonitor.Models;
 using FuzionRainfallMonitor.Services;
 using FuzionRainfallMonitor.Services.Interfaces;
-
-
-Console.WriteLine("----- Fuzion Rainfall Monitor — Smoke Test -----");
-Console.WriteLine();
-
-// 1. Test PathHelper
-AppLogger.LogInfo("Testing PathHelper");
-Console.WriteLine($"  Project Data Folder: {PathHelper.DataFolder}");
-
-var readingFiles = PathHelper.GetAllReadingFiles();
-Console.WriteLine($"  Reading files found: {readingFiles.Length}");
-foreach (var file in readingFiles)
-    Console.WriteLine($"    → {Path.GetFileName(file)}");
-
-Console.WriteLine();
-
-// 2. Testing Models can be instantiated
-AppLogger.LogInfo("Testing Models...");
-
-var testDevice = new Device
-{
-    DeviceId = 10451,
-    DeviceName = "Gauge 1",
-    Location = "Biyamiti"
-};
-Console.WriteLine($"  Device: [{testDevice.DeviceId}] {testDevice.DeviceName} @ {testDevice.Location}");
-
-var testReading = new RainfallReading
-{
-    DeviceId = 10451,
-    Timestamp = DateTime.Now,
-    RainfallRaw = "8.5",
-    RainfallMm = 8.5
-};
-Console.WriteLine($"  Reading: Device {testReading.DeviceId} | {testReading.Timestamp:yyyy-MM-dd HH:mm} | {testReading.RainfallMm}mm");
-
-var testReport = new DeviceReport
-{
-    DeviceId = 10451,
-    DeviceName = "Gauge 1",
-    Location = "Biyamiti",
-    AverageRainfallMm = 12.4,
-    Status = RainfallStatus.Amber,
-    Trend = RainfallTrend.Increasing,
-    ReadingCount = 8
-};
-Console.WriteLine($"  Report: [{testReport.Status}] {testReport.DeviceName} | Avg: {testReport.AverageRainfallMm}mm | Trend: {testReport.Trend}");
-
-Console.WriteLine();
-
-// 3. Testing AppLogger levels
-AppLogger.LogInfo("Testing AppLogger levels");
-AppLogger.LogInfo("This is an INFO message");
-AppLogger.LogWarning("This is a WARN message");
-AppLogger.LogError("This is an ERROR message");
-
-AppLogger.LogInfo("\n  Smoke test complete — all helpers and models OK!");
-
-// 4. Testing CSV loading
-Console.WriteLine("----- Fuzion Rainfall Monitor — CSV Load -----");
+using FuzionRainfallMonitor.Tests;
 
 ICsvService csvService = new CsvService();
 IRainfallService rainfallService = new RainfallService();
 
+// ─── SMOKE TESTS ──────────────────────────────────────────
+SmokeTests.Run(csvService);
+
+
+
+// ─── CSV LOAD ─────────────────────────────────────────────
+Console.WriteLine("----- Fuzion Rainfall Monitor — CSV Load -----");
 
 // Load devices
 var devices = csvService.ReadDevices(PathHelper.GetDataFilePath("Devices.csv"));
@@ -78,7 +25,7 @@ var (allReadings, fileSummaries) = csvService.LoadAllReadings(PathHelper.GetAllR
 // Display all readings summary table
 ConsoleDisplay.ShowReadingFilesSummary(fileSummaries, allReadings.Count);
 
-// 3. Generate and display reports
+// ─── GENERATE REPORTS ─────────────────────────────────────
 Console.WriteLine("----- Fuzion Rainfall Monitor — Generate Reports -----");
 
 var reports = rainfallService.GenerateReports(devices, allReadings);
