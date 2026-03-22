@@ -27,29 +27,30 @@ namespace FuzionRainfallMonitor.Display
             {
                 ConsoleMenu.ShowMainMenu();
 
-                var input = Console.ReadLine()?.Trim();
+                var input = Console.ReadLine()?.Trim().ToUpper();
 
                 switch (input)
                 {
                     case "1":
-                        RunSmokeTests();
-                        break;
-
-                    case "2":
                         LoadAndShowDevices();
                         break;
 
-                    case "3":
+                    case "2":
                         GenerateRainfallReport();
                         break;
 
-                    case "4":
+                    case "3":
+                        RunSmokeTests();
+                        break;
+
+                    case "Q":
+                    case "E":
                         running = false;
                         ConsoleMenu.ShowGoodbye();
                         break;
 
                     default:
-                        AppLogger.LogWarning("Invalid option — please enter 1, 2, 3 or 4");
+                        AppLogger.LogWarning("Invalid option — please enter 1, 2, 3 or Q to quit");
                         break;
                 }
 
@@ -64,12 +65,6 @@ namespace FuzionRainfallMonitor.Display
         }
 
         // ─── Menu Actions ─────────────────────────────────────────
-
-        private void RunSmokeTests()
-        {
-            Console.Clear();
-            SmokeTests.Run(_deviceReader, _readingReader);
-        }
 
         private void LoadAndShowDevices()
         {
@@ -101,6 +96,12 @@ namespace FuzionRainfallMonitor.Display
             Console.WriteLine();
 
             ConsoleDisplay.ShowDeviceReports(reports);
+        }
+
+        private void RunSmokeTests()
+        {
+            Console.Clear();
+            SmokeTests.Run(_deviceReader, _readingReader);
         }
     }
 }

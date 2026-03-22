@@ -26,10 +26,10 @@
             Console.WriteLine("  What would you like to do?");
             Console.WriteLine("  ------------------------------------------------------------------------------------------");
             Console.ResetColor();
-            Console.WriteLine("  [1]  Run system smoke tests");
-            Console.WriteLine("  [2]  View loaded devices and reading files");
-            Console.WriteLine("  [3]  Generate rainfall status report");
-            Console.WriteLine("  [4]  Quit");
+            Console.WriteLine("  [1]  Load devices and reading files");
+            Console.WriteLine("  [2]  Generate rainfall status report");
+            Console.WriteLine("  [3]  Run system tests");
+            Console.WriteLine("  [Q]  Quit");
             Console.WriteLine();
             Console.Write("  Enter your choice: ");
         }
