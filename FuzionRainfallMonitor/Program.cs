@@ -62,23 +62,29 @@ AppLogger.LogError("This is an ERROR message");
 AppLogger.LogInfo("\n  Smoke test complete — all helpers and models OK!");
 
 // 4. Testing CSV loading
+Console.WriteLine("----- Fuzion Rainfall Monitor — CSV Load -----");
 
 ICsvService csvService = new CsvService();
+IRainfallService rainfallService = new RainfallService();
+
 
 // Load devices
 var devices = csvService.ReadDevices(PathHelper.GetDataFilePath("Devices.csv"));
 ConsoleDisplay.ShowDevicesSummary(devices);
 
 // Load all reading files — track per-file counts for display
-var allReadings = new List<RainfallReading>();
-var fileSummaries = new List<(string FileName, int Count)>();
-
-foreach (var file in PathHelper.GetAllReadingFiles())
-{
-    var readings = csvService.ReadRainfallReadings(file);
-    allReadings.AddRange(readings);
-    fileSummaries.Add((Path.GetFileName(file), readings.Count));
-}
+var (allReadings, fileSummaries) = csvService.LoadAllReadings(PathHelper.GetAllReadingFiles());
 
 // Display all readings summary table
 ConsoleDisplay.ShowReadingFilesSummary(fileSummaries, allReadings.Count);
+
+// 3. Generate and display reports
+Console.WriteLine("----- Fuzion Rainfall Monitor — Generate Reports -----");
+
+var reports = rainfallService.GenerateReports(devices, allReadings);
+
+Console.WriteLine();
+Console.WriteLine("=== Rainfall Status Report ===");
+Console.WriteLine();
+
+ConsoleDisplay.ShowDeviceReports(reports);

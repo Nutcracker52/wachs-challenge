@@ -82,6 +82,21 @@ namespace FuzionRainfallMonitor.Services
             return validReadings;
         }
 
+        public (List<RainfallReading> Readings, List<(string FileName, int Count)> Summaries) LoadAllReadings(string[] filePaths)
+        {
+            var allReadings = new List<RainfallReading>();
+            var summaries = new List<(string FileName, int Count)>();
+
+            foreach (var file in filePaths)
+            {
+                var readings = ReadRainfallReadings(file);
+                allReadings.AddRange(readings);
+                summaries.Add((Path.GetFileName(file), readings.Count));
+            }
+
+            return (allReadings, summaries);
+        }
+
         // ─── Private Helpers ──────────────────────────────────────
 
         private static RainfallReading? ParseReading(CsvReader csv)
